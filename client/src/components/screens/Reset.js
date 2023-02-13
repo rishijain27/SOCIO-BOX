@@ -1,14 +1,11 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import M from "materialize-css";
 import { UserContext } from "../../App";
 
-const Signin = () => {
+const Reset = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { state, dispatch } = useContext(UserContext);
   const navigate = useNavigate();
 
   const PostData = () => {
@@ -20,14 +17,13 @@ const Signin = () => {
       M.toast({ html: "Invalid Email" });
       return;
     }
-    fetch("/signin", {
+    fetch("/reset", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email,
-        password,
       }),
     })
       .then((res) => res.json())
@@ -35,11 +31,8 @@ const Signin = () => {
         if (data.error) {
           M.toast({ html: data.error });
         } else {
-          localStorage.setItem("jwt", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          dispatch({ type: "USER", payload: data.user });
-          M.toast({ html: "Signed In Succesfully" });
-          navigate("/");
+          M.toast({ html: data.message });
+          navigate("/signin");
         }
       })
       .catch((err) => {
@@ -56,28 +49,16 @@ const Signin = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
 
         <button
           className="btn waves-effect waves-light #64b5f6 blue darken-1"
           onClick={PostData}
         >
-          Login
+          Resest Password
         </button>
-        <h6>
-          <Link to="/signup">Do not have an account?</Link>
-        </h6>
-        <h6>
-          <Link to="/reset">Forget Password?</Link>
-        </h6>
       </div>
     </div>
   );
 };
 
-export default Signin;
+export default Reset;
